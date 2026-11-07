@@ -104,16 +104,39 @@ En Linux, `fwupd` permite actualizar firmware de dispositivos compatibles median
 
 | Dato de la ficha | Qué significa | ¿Es bueno? ¿Para qué uso? |
 |---|---|---|
+| UEFI AMI BIOS | Firmware UEFI del fabricante AMI con interfaz gráfica | Sí: arranque moderno, Secure Boot y GPT |
+| Flash ROM de 256 Mb | Tamaño del chip que guarda el firmware | Suficiente; permite actualizaciones grandes |
+| Soporte TPM (cabecera TPM / fTPM de AMD) | Se puede añadir un TPM discreto o usar el integrado en la CPU | Bueno: cumple el requisito de Windows 11 y permite cifrar con LUKS |
+| Secure Boot | Verificación de firmas antes de arrancar | Necesario para entornos seguros; compatible con Ubuntu vía shim |
+| Función de actualización de BIOS desde USB | Permite flashear el firmware sin sistema operativo | Útil si el equipo no arranca tras un fallo |
+| Pila CR2032 | Alimenta el CMOS | Es el repuesto más barato y habitual |
 
 ![Fotografía de la ASUS PRIME B550M-A](img/modelo.jpg).
 
 ## 6. Averías típicas y errores al elegirla o instalarla
 
+| Problema | Causa probable | Solución |
+|---|---|---|
+| El equipo pierde la hora y los ajustes al apagarse | Pila CR2032 agotada | Cambiar la pila |
+| Pitidos al encender y no hay imagen | Fallo de RAM o gráfica detectado por el POST | Reasentar los módulos; consultar el beep code del fabricante |
+| "No bootable device" tras instalar un sistema | Modo de arranque incorrecto (UEFI/Legacy) o disco en MBR con firmware UEFI | Ajustar el modo en el setup o convertir el disco a GPT |
+| Ubuntu no arranca con Secure Boot activo | Módulos o drivers sin firmar | Firmar con MOK (mokutil) o desactivar Secure Boot temporalmente |
+| Windows 11 no se instala | TPM 2.0 o Secure Boot desactivados | Activar fTPM y Secure Boot en el setup |
+| El equipo no arranca tras actualizar el firmware | Actualización interrumpida | Usar la función de recuperación por USB o el dual BIOS de la placa |
+| Sistema dual-boot que desaparece | Cambio en el orden de arranque en la NVRAM | Corregir con efibootmgr o reinstalar GRUB |
+
+*Errores al elegir o instalar:*
+
+- Instalar en MBR en un equipo UEFI, o al revés.
+- Borrar o formatear la ESP sin querer.
+- Actualizar el firmware sin comprobar que el modelo y la versión son los correctos.
+- Desactivar Secure Boot "para que funcione" sin entender qué se pierde.
+- Perder la clave de recuperación de LUKS o BitLocker antes de cambiar hardware o firmware, porque al cambiar los PCR el TPM no libera la clave.
+
 ## 7. Fuentes
 
-1.
-2.
-3.
+1. UEFI Forum. UEFI Specification (uefi.org/specifications)
+2. Ubuntu Documentation. SecureBoot (wiki.ubuntu.com/UEFI/SecureBoot)
 
 ## Uso de IA
 
@@ -121,9 +144,8 @@ Herramientas declaradas por el grupo: Claude, ChatGPT, Gemini y Perplexity. En e
 
 Claude y Chatgpt ayuda para organizar la información y gestionar los tiempos y palabras
 
+Claude creo las imagenes de los esquemas utilizados en la presentacion
+
 Gemini cuestiones y dudas menores
 
 Perplexity a buscar información y enlaces reales y precios
-
-
-
