@@ -16,9 +16,8 @@ UEFI permite servicios de arranque, controladores y aplicaciones previas al sist
 
 ## 2. Cómo funciona por dentro
 
-![Esquema de funcionamiento](img/ejemplo-esquema.svg)
+![Esquema de funcionamiento](img/boot-flow.svg)
 
-<!-- Guardad vuestras imágenes en img/ y cambiad el nombre del archivo en la línea de arriba. -->
 
 ### Encendido y POST
 
@@ -78,7 +77,7 @@ sudo efibootmgr -v
 ## 4. Tipos, evolución y estándares actuales
 ![Comparación entre las estructuras MBR y GPT](img/mbr-gpt.svg)
 
-<!-- Pendiente: guardar una comparación propia en img/mbr-gpt.svg. -->
+
 
 | Aspecto | BIOS heredada | UEFI |
 |---|---|---|
@@ -106,7 +105,7 @@ En Linux, `fwupd` permite actualizar firmware de dispositivos compatibles median
 | Dato de la ficha | Qué significa | ¿Es bueno? ¿Para qué uso? |
 |---|---|---|
 
-<!-- Aquí va la foto o captura del modelo: ![Foto del modelo](img/modelo.jpg) -->
+![Fotografía de la ASUS PRIME B550M-A](img/modelo.jpg).
 
 ## 6. Averías típicas y errores al elegirla o instalarla
 
