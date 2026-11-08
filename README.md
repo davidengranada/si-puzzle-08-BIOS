@@ -1,6 +1,8 @@
 # Puzzle UT2 · Pieza 08: BIOS / UEFI (firmware)
 
-**Grupo:** David Martinez do Nascimento (@davidengranada) · Nombre Apellido (@usuario)
+**Grupo:** David Martinez do Nascimento (@davidengranada) · Sergio Alvarez Marfil (@sergioalvarezmarfil)
+
+**Presentación interactiva:** [si-puzzle-08-BIOS_presentacion.html](si-puzzle-08-BIOS_presentacion.html) (descárgala y ábrela en el navegador)
 
 ## 1. Qué es y qué función cumple en el sistema
 
