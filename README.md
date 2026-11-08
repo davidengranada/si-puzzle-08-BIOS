@@ -133,14 +133,15 @@ En Linux, `fwupd` permite actualizar firmware de dispositivos compatibles median
 
 1. UEFI Forum. UEFI Specifications. https://uefi.org/specifications
 2. Ubuntu Documentation. Secure Boot. https://documentation.ubuntu.com/security/security-features/platform-protections/secure-boot/
-3. Microsoft. Windows 11 Specifications. https://www.microsoft.com/windows/windows-11-specifications
-4. LVFS / fwupd. https://fwupd.org/
+3. ASUS. Ficha técnica del PRIME B550M-A. https://www.asus.com/es/motherboards-components/motherboards/prime/prime-b550m-a/techspec/
+4. Microsoft. Windows 11 Specifications. https://www.microsoft.com/windows/windows-11-specifications
+5. LVFS / fwupd. https://fwupd.org/
 
 ## Uso de IA
 
 Herramientas declaradas por el grupo: Claude, ChatGPT, Gemini y Perplexity. En esta revisión se utilizó Perplexity para revisar afirmaciones, contrastar enlaces oficiales y preparar el Markdown corregido.
 
 - **Claude y ChatGPT:** ayuda para organizar la información y gestionar los tiempos y el número de palabras.
-- **Claude:** creó las imágenes de los esquemas utilizados en la presentación.
+- **Claude:** creó gran parte de la presentación y las imagenes utilizados en la esta.
 - **Gemini:** cuestiones y dudas menores.
 - **Perplexity:** búsqueda de información, enlaces reales y precios.

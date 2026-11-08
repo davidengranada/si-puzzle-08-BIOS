@@ -41,4 +41,34 @@ Adapta la tabla del README §4 a las columnas de `teoria.md` (Tipo | Dato clave 
 | Secure Boot | `db`/`dbx`, firmas | Evitar cargadores no confiables |
 | TPM 2.0 | PCR, claves | Windows 11, cifrado de disco |
 
+## 3. Datos que hay que saberse (lista corta, lo que cae en test)
 
+- 256 Mbit = *32 MB* (bits ≠ bytes).
+- BIOS: *1 MiB* en modo real; UEFI 64 bits supera ese límite.
+- MBR ≈ *2 TiB* (sectores de 512 B); GPT: 128 particiones habituales.
+- Pila: *CR2032, 3 V*.
+- UEFI ≠ GPT (no son sinónimos).
+- Windows 11: *TPM 2.0 + firmware UEFI "Secure Boot capable"* (no "siempre activado").
+- Comandos útiles (solo estos 4):
+  - [ -d /sys/firmware/efi ] → ¿arranque UEFI?
+  - mokutil --sb-state → estado de Secure Boot
+  - efibootmgr -v → entradas de arranque
+  - sudo dmidecode -t bios → datos del firmware
+- Averías clave: pila agotada (pierde la hora), "No bootable device" (modo UEFI/Legacy o MBR/GPT mal), Ubuntu no arranca con Secure Boot (módulos sin firmar → MOK), perder la clave LUKS/BitLocker al cambiar firmware (cambian los PCR).
+
+## 4. Test: 8 preguntas (propuesta de temas, una por concepto)
+
+Respeta el formato de teoria.md (a–d, marcar la correcta con ← correcta, explicación de 1 línea). Temas sugeridos:
+
+| # | Tema | Idea de la pregunta |
+|---|---|---|
+| 1 | Función del firmware | ¿Qué hace justo después de encender? (inicializa hardware y lanza el bootloader) |
+| 2 | BIOS vs UEFI | ¿Qué modo/bits usa la BIOS tradicional? (16 bits, 1 MiB) |
+| 3 | ESP | ¿Qué sistema de archivos y qué contiene? (FAT32, .efi) |
+| 4 | MBR vs GPT | ¿Qué límite tiene MBR? (~2 TiB, 4 primarias) |
+| 5 | Secure Boot | ¿Qué contiene dbx? (revocaciones) |
+| 6 | Cadena Ubuntu | ¿Orden correcto? (shim → GRUB → kernel) |
+| 7 | TPM / Windows 11 | ¿Qué exige Windows 11? (TPM 2.0 + UEFI Secure Boot capable) |
+| 8 | Avería | Pierde la hora al apagar → ¿causa? (pila CR2032) |
+
+Consejo: haz los distractores con errores típicos (UEFI = GPT, la pila guarda todas las variables UEFI, Secure Boot elimina el malware).
