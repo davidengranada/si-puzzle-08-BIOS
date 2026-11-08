@@ -1,7 +1,6 @@
-# Puzzle UT2 · Pieza NN: Nombre de la pieza
+# Puzzle UT2 · Pieza 08: BIOS / UEFI (firmware)
 
 **Grupo:** David Martinez do Nascimento (@davidengranada) · Nombre Apellido (@usuario)
-:wq
 
 ## 1. Qué es y qué función cumple en el sistema
 
@@ -10,30 +9,29 @@ El firmware es el primer software que inicia el funcionamiento del equipo al enc
 Hay dos generaciones principales:
 
 - **BIOS heredada:** asociada al IBM PC de 1981; su entorno tradicional de arranque utiliza modo real 16 bits, con un espacio de direcciones de 1 MiB. Esto no significa que el sistema quede limitado a esa memoria.
-- **UEFI:** interfaz estandarizada sucesora de la BIOS tradicional, con implementaciones de 32 o 64 bits; en los PC x86-64 modernos lo habitual es una implementación de 64 bits ([UEFI Forum](https://uefi.org/specifications))
+- **UEFI:** interfaz estandarizada sucesora de la BIOS tradicional, con implementaciones de 32 o 64 bits; en los PC x86-64 modernos lo habitual es una implementación de 64 bits ([UEFI Forum](https://uefi.org/specifications)).
 
-UEFI permite servicios de arranque, controladores y aplicaciones previas al sistema operativo; no exige que el menú de configuración sea gráfico. Una cadena de Ubuntu, con Secure Boot activo, es `Encendido → inicialización y POST → shim → GRUB → kernel e initramfs → systemd → login` ([Ubuntu](https://documentation.ubuntu.com/security/security-features/plataform-protections/secure-boot/)).
+UEFI permite servicios de arranque, controladores y aplicaciones previas al sistema operativo; no exige que el menú de configuración sea gráfico. Una cadena de Ubuntu, con Secure Boot activo, es `Encendido → inicialización y POST → shim → GRUB → kernel e initramfs → systemd → login` ([Ubuntu](https://documentation.ubuntu.com/security/security-features/platform-protections/secure-boot/)).
 
 ## 2. Cómo funciona por dentro
 
 ![Esquema de funcionamiento](img/boot-flow.svg)
 
-
 ### Encendido y POST
 
-La fuente estabilizada la alimentación y la CPU comienza a ejecutar el firmware desde una dirección de inicio definida por la arquitectura. El firmware inicia el componentes y realiza comprobaciones, conocidas como POST, sobre elementos comos la memoria y los dispositivos necesarios para arrancar.
+Cuando la fuente estabiliza la alimentación, la CPU comienza a ejecutar el firmware desde una dirección de inicio definida por la arquitectura. El firmware inicializa los componentes y realiza comprobaciones, conocidas como POST, sobre elementos como la memoria y los dispositivos necesarios para arrancar.
 
-Los avisos dependen de la placa: pueden ser pitidos, LEDs o códigos en un display. No todos los equipos emiten un pitidos de éxito  ni llevan altavoz; los códigos deben consultarse en el manual del modelo.
+Los avisos dependen de la placa: pueden ser pitidos, LEDs o códigos en un display. No todos los equipos emiten un pitido de éxito ni llevan altavoz; los códigos deben consultarse en el manual del modelo.
 
 ### Ajustes y búsquedas del arranque
 
-La pila de botón mantiene principalmente el reloj en tiempo y, en diseños tradicionales, la memoria CMOS. En equipos UEFI muchos ajustes y variables de arranque de aguardan en almacenamiento no volátil, por lo que no es correcto afirmar que todos dependen de la pila; Ubuntu utiliza NVRAM como `Boot0order` y `Boot###` para selecionar el arranque([Ubuntu](https://documentation.ubuntu.com/security/security-features/plataform-protections/secure-boot)).
+La pila de botón mantiene principalmente el reloj de tiempo real (RTC) y, en diseños tradicionales, la memoria CMOS. En equipos UEFI muchos ajustes y variables de arranque se guardan en almacenamiento no volátil, por lo que no es correcto afirmar que todos dependen de la pila; Ubuntu utiliza variables NVRAM como `BootOrder` y `Boot####` para seleccionar el arranque ([Ubuntu](https://documentation.ubuntu.com/security/security-features/platform-protections/secure-boot/)).
 
-En el arranque BIOS clásico se ejecuta código del primer sector del dispositivo. UEFI puede cargar un archivo `.efi` desde la partición del sistema EFI o ESP, habitualmente FAT32 en discos de PC; además de las entradas NVRAM, existe una ruta reserva, como `\EFI\BOOT\BOOTX64.EFI`para x86-64 ([UEFI Forum](https://uefi.org/specifications)).
+En el arranque BIOS clásico se ejecuta código del primer sector del dispositivo. UEFI puede cargar un archivo `.efi` desde la partición del sistema EFI o ESP, habitualmente FAT32 en discos de PC; además de las entradas NVRAM, existe una ruta de reserva, como `\EFI\BOOT\BOOTX64.EFI`, para x86-64 ([UEFI Forum](https://uefi.org/specifications)).
 
-### Seguirdad y traspaso al sistema
+### Seguridad y traspaso al sistema
 
-Secure Boot comprueba los ejecutables de arranque según una política de confianza: `db` contiene autorizada y `dbx`, revocaciones. No garantiza por sí solo que el sistema esté libre de todo malware ([UEFI Forum](https://uefi.org/specifications)).
+Secure Boot comprueba los ejecutables de arranque según una política de confianza: `db` contiene las firmas y claves autorizadas, y `dbx`, las revocadas. No garantiza por sí solo que el sistema esté libre de todo malware ([UEFI Forum](https://uefi.org/specifications)).
 
 Ubuntu proporciona `shim` firmado por Microsoft y GRUB firmado por Canonical; el firmware valida `shim`, este valida GRUB y GRUB comprueba el kernel firmado. El kernel también exige firmas válidas a los módulos externos cuando corresponde, pero no debe afirmarse que todos los archivos del arranque tradicional quedan verificados: la documentación señala que el `initrd` de esa cadena no se valida ([Ubuntu](https://documentation.ubuntu.com/security/security-features/platform-protections/secure-boot/)).
 
@@ -42,7 +40,6 @@ El TPM es un componente criptográfico, que puede ser discreto o implementado me
 Finalmente, el kernel inicializa sus controladores y utiliza normalmente un entorno `initramfs` para preparar el acceso a la raíz. Después arranca `systemd`, que organiza servicios y sesiones, hasta llegar al acceso gráfico o por terminal.
 
 ## 3. Características, unidades y cómo se miden
-
 
 Los valores siguientes son orientativos: no constituyen requisitos universales. La capacidad flash, el tiempo de POST y el tamaño de la ESP dependen del equipo y de la instalación.
 
@@ -75,9 +72,8 @@ sudo efibootmgr -v
 `mokutil` permite consultar el estado de Secure Boot y gestionar determinadas operaciones MOK, pero no firma por sí mismo todos los módulos. Las claves MOK permiten autorizar módulos de terceros mediante el proceso de inscripción correspondiente ([Ubuntu](https://documentation.ubuntu.com/security/security-features/platform-protections/secure-boot/)).
 
 ## 4. Tipos, evolución y estándares actuales
+
 ![Comparación entre las estructuras MBR y GPT](img/mbr-gpt.svg)
-
-
 
 | Aspecto | BIOS heredada | UEFI |
 |---|---|---|
@@ -100,7 +96,7 @@ En Linux, `fwupd` permite actualizar firmware de dispositivos compatibles median
 
 ## 5. Un modelo real: ficha técnica interpretada
 
-**Modelo:** Marca Modelo (enlace a la ficha del fabricante)
+**Modelo:** ASUS PRIME B550M-A (enlace a la ficha del fabricante)
 
 | Dato de la ficha | Qué significa | ¿Es bueno? ¿Para qué uso? |
 |---|---|---|
@@ -111,7 +107,7 @@ En Linux, `fwupd` permite actualizar firmware de dispositivos compatibles median
 | Función de actualización de BIOS desde USB | Permite flashear el firmware sin sistema operativo | Útil si el equipo no arranca tras un fallo |
 | Pila CR2032 | Alimenta el CMOS | Es el repuesto más barato y habitual |
 
-![Fotografía de la ASUS PRIME B550M-A](img/modelo.jpg).
+![Fotografía de la ASUS PRIME B550M-A](img/modelo.jpg)
 
 ## 6. Averías típicas y errores al elegirla o instalarla
 
@@ -135,17 +131,16 @@ En Linux, `fwupd` permite actualizar firmware de dispositivos compatibles median
 
 ## 7. Fuentes
 
-1. UEFI Forum. UEFI Specification (uefi.org/specifications)
-2. Ubuntu Documentation. SecureBoot (wiki.ubuntu.com/UEFI/SecureBoot)
+1. UEFI Forum. UEFI Specifications. https://uefi.org/specifications
+2. Ubuntu Documentation. Secure Boot. https://documentation.ubuntu.com/security/security-features/platform-protections/secure-boot/
+3. Microsoft. Windows 11 Specifications. https://www.microsoft.com/windows/windows-11-specifications
+4. LVFS / fwupd. https://fwupd.org/
 
 ## Uso de IA
 
 Herramientas declaradas por el grupo: Claude, ChatGPT, Gemini y Perplexity. En esta revisión se utilizó Perplexity para revisar afirmaciones, contrastar enlaces oficiales y preparar el Markdown corregido.
 
-Claude y Chatgpt ayuda para organizar la información y gestionar los tiempos y palabras
-
-Claude creo las imagenes de los esquemas utilizados en la presentacion
-
-Gemini cuestiones y dudas menores
-
-Perplexity a buscar información y enlaces reales y precios
+- **Claude y ChatGPT:** ayuda para organizar la información y gestionar los tiempos y el número de palabras.
+- **Claude:** creó las imágenes de los esquemas utilizados en la presentación.
+- **Gemini:** cuestiones y dudas menores.
+- **Perplexity:** búsqueda de información, enlaces reales y precios.
