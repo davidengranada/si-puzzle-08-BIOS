@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Del botón al login: el arranque de Linux</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#f4f6fb;--fg:#10162b;--mut:#5a6385;--card:#ffffffcc;--bd:#10162b22;--a:#0a7fd1;--b:#c2188f;--ok:#0e9f5b;--term:#0b1020;--termfg:#7dffb0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#070b1a;--fg:#e8ecff;--mut:#97a1c9;--card:#111a3399;--bd:#7c8cff33;--a:#35d0ff;--b:#ff4fd8;--ok:#4dff9a;--term:#03060f;--termfg:#7dffb0}}
+:root[data-theme="dark"]{--bg:#070b1a;--fg:#e8ecff;--mut:#97a1c9;--card:#111a3399;--bd:#7c8cff33;--a:#35d0ff;--b:#ff4fd8;--ok:#4dff9a;--term:#03060f;--termfg:#7dffb0}
+html{scroll-padding-top:env(safe-area-inset-top,0px);height:100%}
+*{box-sizing:border-box}
+body{margin:0;height:100%;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow:hidden;
+background-image:radial-gradient(circle at 15% 10%,color-mix(in srgb,var(--a) 22%,transparent),transparent 45%),radial-gradient(circle at 90% 90%,color-mix(in srgb,var(--b) 20%,transparent),transparent 45%)}
+body::before{content:"";position:fixed;inset:0;background-image:linear-gradient(var(--bd) 1px,transparent 1px),linear-gradient(90deg,var(--bd) 1px,transparent 1px);background-size:44px 44px;opacity:.35;pointer-events:none;mask-image:radial-gradient(ellipse at center,#000 30%,transparent 80%)}
+.mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+#top{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;z-index:5;display:flex;gap:6px;justify-content:center;padding:12px;flex-wrap:wrap}
+#top button{border:1px solid var(--bd);background:var(--card);color:var(--mut);border-radius:99px;padding:4px 12px;font-size:13px;cursor:pointer;backdrop-filter:blur(8px);transition:.25s}
+#top button:hover{color:var(--fg);border-color:var(--a)}
+#top button.on{background:linear-gradient(90deg,var(--a),var(--b));color:#fff;border-color:transparent;transform:scale(1.07)}
+.s{position:absolute;inset:0;padding:70px 6vw 80px;overflow-y:auto;opacity:0;pointer-events:none;transform:translateX(60px) scale(.98);transition:.55s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;justify-content:center}
+.s.on{opacity:1;pointer-events:auto;transform:none}
+.s.past{transform:translateX(-60px) scale(.98)}
+.tag{color:var(--a);font-weight:700;letter-spacing:.15em;font-size:13px;text-transform:uppercase}
+h1,h2{margin:.2em 0;line-height:1.05}
+h1{font-size:clamp(40px,8vw,96px);background:linear-gradient(90deg,var(--a),var(--b),var(--a));background-size:200%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:g 6s linear infinite}
+@keyframes g{to{background-position:200%}}
+h2{font-size:clamp(28px,4.5vw,52px)}
+.big{font-size:clamp(60px,10vw,120px);filter:drop-shadow(0 0 24px var(--a))}
+p.lead{color:var(--mut);max-width:62ch;font-size:clamp(15px,1.6vw,19px);margin:.3em 0 1em}
+.grid{display:grid;grid-template-columns:minmax(220px,.9fr) 1.3fr;gap:18px;align-items:start;max-width:1100px;width:100%}
+@media(max-width:760px){.grid{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:18px;backdrop-filter:blur(10px)}
+.lst{display:flex;flex-direction:column;gap:8px}
+.lst button,.tabs button,.ent{font:inherit;text-align:left;border:1px solid var(--bd);background:var(--card);color:var(--fg);border-radius:12px;padding:10px 14px;cursor:pointer;transition:.2s;display:flex;gap:10px;align-items:center}
+.lst button:hover,.ent:hover{border-color:var(--a);transform:translateX(4px)}
+.lst button.on,.ent.on{border-color:transparent;background:linear-gradient(90deg,color-mix(in srgb,var(--a) 35%,transparent),color-mix(in srgb,var(--b) 25%,transparent))}
+.lst b{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--a);color:#001;font-size:13px;flex:none}
+.det h3{margin:0 0 6px;color:var(--a)}.det p{margin:.3em 0}
+.det{min-height:150px;animation:pop .35s}
+@keyframes pop{from{opacity:0;transform:translateY(8px)}}
+code,.k{font-family:ui-monospace,Menlo,Consolas,monospace;background:color-mix(in srgb,var(--a) 15%,transparent);padding:1px 6px;border-radius:6px;font-size:.9em}
+.btn{border:0;border-radius:99px;padding:10px 20px;font:inherit;font-weight:700;color:#fff;background:linear-gradient(90deg,var(--a),var(--b));cursor:pointer;margin-top:12px;box-shadow:0 6px 24px color-mix(in srgb,var(--b) 40%,transparent)}
+.btn:hover{filter:brightness(1.15)}
+.term{background:var(--term);color:var(--termfg);border-radius:14px;padding:14px;min-height:260px;font-size:13px;line-height:1.6;overflow:auto;max-height:46vh;border:1px solid var(--bd)}
+.term i{color:#ffd166;font-style:normal}
+.tabs{display:flex;gap:8px;margin-bottom:12px}.tabs button{justify-content:center}.tabs button.on{background:var(--a);color:#001}
+table{width:100%;border-collapse:collapse}td,th{padding:8px;border-bottom:1px solid var(--bd);text-align:left;font-size:15px}th{color:var(--a)}
+.grub{background:#0a0a3a;color:#fff;border:3px solid #aaa;border-radius:6px;padding:14px;font-family:ui-monospace,Menlo,monospace}
+.grub .ent{background:transparent;color:#ddd;border:0;border-radius:0;width:100%;padding:6px 10px}
+.grub .ent.on{background:#ccc;color:#000}
+.bars{display:flex;flex-direction:column;gap:8px}
+.row{display:grid;grid-template-columns:150px 1fr;gap:10px;align-items:center;cursor:pointer;font-size:13px}
+.trk{height:22px;background:var(--bd);border-radius:6px;position:relative;overflow:hidden}
+.fill{position:absolute;top:0;bottom:0;border-radius:6px;background:linear-gradient(90deg,var(--a),var(--b));width:0;left:0;transition:width .9s ease}
+.row:hover .trk{outline:1px solid var(--a)}
+.pill{display:inline-block;padding:2px 10px;border-radius:99px;border:1px solid var(--bd);font-size:13px;color:var(--mut)}
+#nav{position:fixed;bottom:calc(14px + env(safe-area-inset-bottom,0px));left:0;right:0;display:flex;justify-content:center;gap:12px;z-index:5;align-items:center;color:var(--mut);font-size:13px}
+#nav button{width:44px;height:44px;border-radius:50%;border:1px solid var(--bd);background:var(--card);color:var(--fg);font-size:20px;cursor:pointer;backdrop-filter:blur(8px)}
+#nav button:hover{border-color:var(--a)}
+#bar{position:fixed;left:0;top:0;height:3px;background:linear-gradient(90deg,var(--a),var(--b));z-index:9;transition:width .5s}
+.dg{margin-top:14px;padding:14px}.flow{display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px}.nd{display:flex;flex-direction:column;align-items:center;gap:3px;width:62px;text-align:center;opacity:.55;transition:.3s}.nd span{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;border:1px solid var(--bd);background:var(--card);font-size:20px}.nd small{font-size:11px;line-height:1.15;color:var(--mut)}.nd.on{opacity:1;transform:translateY(-3px)}.nd.on span{border-color:var(--a);box-shadow:0 0 16px var(--a)}.ar{color:var(--a);font-weight:700}
+.pulse{animation:pl 1.6s infinite}@keyframes pl{50%{transform:scale(1.08)}}
+</style></head><body>
+<div id="bar"></div><div id="top"></div>
+
+<section class="s" id="s0">
+ <div class="tag">Linux · Arranque y BIOS · Sergio Álvarez y David Martinez</div>
+ <div class="big pulse">⏻</div>
+ <h1>Del botón<br>al login</h1>
+ <p class="lead">Siete etapas, en menos de 20 segundos, que convierten metal apagado en un escritorio listo. Pulsa → o usa la barra superior para recorrerlas. Cada diapositiva tiene algo con lo que jugar.</p>
+ <div><button class="btn" onclick="go(1)">Empezar el arranque ▸</button></div>
+</section>
+
+<section class="s" id="s1">
+ <div class="tag">1 · Encendido</div><h2>⚡ Pulsas el botón</h2>
+ <p class="lead">Antes de que haya software, es pura electricidad. Pulsa cada paso y mira cómo se ilumina en el esquema.</p>
+ <div class="grid"><div id="st1"></div><div class="card det" id="d1"></div></div>
+</section>
+
+<section class="s" id="s2">
+ <div class="tag">2 · POST</div><h2>🩺 Power-On Self-Test</h2>
+ <p class="lead">El firmware comprueba que CPU, RAM y dispositivos básicos funcionan antes de seguir.</p>
+ <div class="grid"><div><div class="term mono" id="t2"></div><button class="btn" onclick="post()">▶ Ejecutar POST</button></div>
+ <div class="card"><h3 style="margin-top:0;color:var(--a)">¿Y si algo falla?</h3><p>Sin pantalla aún, el firmware avisa con <b>pitidos</b>. Un pitido corto suele significar «todo bien»; una serie larga o repetida indica fallo de RAM o gráfica (los códigos varían según el fabricante).</p><p>Con UEFI moderno también verás <b>LEDs de diagnóstico</b> en la placa o mensajes en pantalla.</p>
+ <span class="pill">Si pasa → busca dispositivo de arranque</span></div></div>
+</section>
+
+<section class="s" id="s3">
+ <div class="tag">3 · UEFI</div><h2>🧠 El firmware: BIOS vs UEFI</h2>
+ <p class="lead">Elige pestaña y compara. Hoy casi todos los equipos usan UEFI.</p>
+ <div class="card" style="max-width:1000px;width:100%"><div class="tabs"><button class="on" data-m="0">BIOS clásico</button><button data-m="1">UEFI</button><button data-m="2">Secure Boot</button></div><div class="det" id="d3"></div></div>
+</section>
+
+<section class="s" id="s4">
+ <div class="tag">4 · Gestor de arranque</div><h2>📀 GRUB elige y carga</h2>
+ <p class="lead">Usa ↑ ↓ (o haz clic) en el menú de la izquierda y comprueba qué carga cada entrada.</p>
+ <div class="grid"><div class="grub" id="g4"></div><div class="card det" id="d4"></div></div>
+</section>
+
+<section class="s" id="s5">
+ <div class="tag">5 · Núcleo (kernel)</div><h2>🐧 Despierta Linux</h2>
+ <p class="lead">El gestor deja el kernel en memoria. Estos son sus primeros pasos; pulsa cada uno.</p>
+ <div class="grid"><div id="st5"></div><div class="card det" id="d5"></div></div>
+</section>
+
+<section class="s" id="s6">
+ <div class="tag">6 · init / systemd</div><h2>🚀 systemd pone todo en marcha</h2>
+ <p class="lead">El kernel lanza el proceso <code>PID 1</code>. systemd arranca servicios <b>en paralelo</b> hasta alcanzar un target. Haz clic en una barra.</p>
+ <div class="grid" style="grid-template-columns:1.3fr 1fr"><div class="card bars" id="b6"></div><div class="card det" id="d6"></div></div>
+ <div><button class="btn" onclick="units()">↻ Repetir arranque</button></div>
+</section>
+
+<section class="s" id="s7">
+ <div class="tag">7 · Login</div><h2>🔐 ¡Bienvenido!</h2>
+ <p class="lead">Último tramo: identificarte y abrir tu sesión.</p>
+ <div class="grid"><div id="st7"></div><div class="card det" id="d7"></div></div>
+ <div><span class="pill">Encendido → POST → UEFI → GRUB → kernel → systemd → login ✔</span></div>
+</section>
+
+<div id="nav"><button onclick="go(cur-1)" aria-label="Anterior">‹</button><span id="cnt"></span><button onclick="go(cur+1)" aria-label="Siguiente">›</button></div>
+
+<script>
+const names=["Inicio","Encendido","POST","UEFI","GRUB","Kernel","systemd","Login"];
+let cur=0;const S=[...document.querySelectorAll('.s')];
+const top_=document.getElementById('top');
+names.forEach((n,i)=>{const b=document.createElement('button');b.textContent=i?i+' '+n:'⏻';b.onclick=()=>go(i);top_.appendChild(b)});
+function go(i){i=Math.max(0,Math.min(S.length-1,i));cur=i;
+ S.forEach((s,k)=>{s.classList.toggle('on',k==i);s.classList.toggle('past',k<i)});
+ [...top_.children].forEach((b,k)=>b.classList.toggle('on',k==i));
+ document.getElementById('bar').style.width=(i/(S.length-1)*100)+'%';
+ document.getElementById('cnt').textContent=i+' / '+(S.length-1);
+ try{history.replaceState(null,'','#s'+i)}catch(e){}
+ if(i==6)units();}
+addEventListener('keydown',e=>{
+ if(e.key=='ArrowRight'||e.key==' '||e.key=='PageDown'){e.preventDefault();go(cur+1)}
+ else if(e.key=='ArrowLeft'||e.key=='PageUp')go(cur-1);
+ else if(cur==4&&e.key=='ArrowDown'){e.preventDefault();gsel(g+1)}
+ else if(cur==4&&e.key=='ArrowUp'){e.preventDefault();gsel(g-1)}});
+
+function stepper(sid,did,items,dg){
+ const el=document.getElementById(sid),d=document.getElementById(did);let tm;
+ el.innerHTML='<div class="lst">'+items.map((x,i)=>`<button data-i="${i}"><b>${i+1}</b>${x[0]}</button>`).join('')+'</div>'+(dg?'<div class="card dg"><div class="mono" style="font-size:12px;color:var(--mut);margin-bottom:8px">ESQUEMA</div><div class="flow">'+dg.map((n,i)=>`${i?'<span class="ar">→</span>':''}<div class="nd"><span>${n[0]}</span><small>${n[1]}</small></div>`).join('')+'</div></div>':'');
+ const sel=i=>{[...el.querySelectorAll('.lst button')].forEach((b,k)=>b.classList.toggle('on',k==i));d.innerHTML='<h3>'+items[i][0]+'</h3>'+items[i][1];el.querySelectorAll('.nd').forEach((n,k)=>n.classList.toggle('on',k==i))};
+ el.querySelectorAll('.lst button').forEach(b=>b.onclick=()=>{clearInterval(tm);sel(+b.dataset.i)});
+ 
+ sel(0);}
+
+stepper('st1','d1',[
+ ['Pulsas el botón','<p>El botón no «arranca» nada por software: cierra un circuito y le dice a la placa que despierte. Una pequeña tensión de reserva (<code>+5VSB</code>) ya estaba activa.</p>'],
+ ['La fuente (PSU) se activa','<p>La placa envía la señal <code>PS_ON</code> y la fuente empieza a entregar <code>+3,3 V</code>, <code>+5 V</code> y <code>+12 V</code>.</p>'],
+ ['Señal Power Good','<p>Cuando los voltajes son estables, la fuente envía <code>Power Good</code>. Hasta entonces el procesador se mantiene en reset para no arrancar con corriente inestable.</p>'],
+ ['El CPU sale del reset','<p>El chipset suelta la línea de reset. El procesador arranca en un modo muy básico, sin RAM configurada ni sistema operativo.</p>'],
+ ['Salta al firmware','<p>El CPU ejecuta su primera instrucción en una dirección fija cercana al final del primer 4 GB (<code>0xFFFFFFF0</code>), donde la memoria flash de la placa mapea el firmware.</p>']],[['🔘','Botón'],['🔌','Fuente'],['✅','Power Good'],['🧠','CPU sale de reset'],['💾','Firmware']]);
+
+const L=['Initializing CPU .................. <b>OK</b>','Detecting memory: 16384 MB ........ <b>OK</b>','Memory test (quick) ............... <b>OK</b>','Initializing chipset .............. <b>OK</b>','Scanning PCIe devices ............. <b>OK</b>','Initializing GPU .................. <b>OK</b>','Detecting storage: NVMe, SATA ..... <b>OK</b>','Detecting USB controllers ......... <b>OK</b>','<i>beep!</i> POST completado → cargando firmware UEFI'];
+function post(){const t=document.getElementById('t2');t.innerHTML='';let i=0;const n=()=>{if(i>=L.length)return;t.innerHTML+=L[i++]+'<br>';t.scrollTop=1e5;setTimeout(n,450)};n()}
+document.getElementById('t2').innerHTML='<span style="opacity:.6">Pulsa «Ejecutar POST»…</span>';
+
+const U=[
+ '<h3>BIOS clásico (1980s)</h3><table><tr><th>Modo</th><td>16 bits, interfaz de texto</td></tr><tr><th>Disco</th><td>Tabla <b>MBR</b>, máx. 2 TB, 4 particiones primarias</td></tr><tr><th>Arranque</th><td>Lee los primeros <b>512 bytes</b> del disco (el sector de arranque)</td></tr></table>',
+ '<h3>UEFI (estándar moderno)</h3><table><tr><th>Modo</th><td>32/64 bits, ratón, red, gráficos</td></tr><tr><th>Disco</th><td>Tabla <b>GPT</b>, discos enormes</td></tr><tr><th>Arranque</th><td>Carga un archivo <code>.efi</code> desde la <b>partición ESP</b> (FAT32), normalmente en <code>/boot/efi</code></td></tr><tr><th>En Linux</th><td><code>efibootmgr</code> lista y edita las entradas</td></tr></table>',
+ '<h3>Secure Boot</h3><p>UEFI solo ejecuta binarios <b>firmados</b> con claves de confianza. Las distros usan un pequeño cargador intermedio llamado <b>shim</b> que valida GRUB y el kernel.</p><p>Si usas drivers propios, puede que debas registrar una clave con <code>mokutil</code>.</p>'];
+const d3=document.getElementById('d3');const tb=document.querySelectorAll('.tabs button');
+tb.forEach(b=>b.onclick=()=>{tb.forEach(x=>x.classList.remove('on'));b.classList.add('on');d3.innerHTML=U[b.dataset.m]});d3.innerHTML=U[0];
+
+const G=[['Ubuntu','<p>Carga <code>/boot/vmlinuz-6.x</code> y el <code>initrd.img</code> con la línea de comandos <code>root=UUID=… quiet splash</code>.</p>'],
+ ['Opciones avanzadas para Ubuntu','<p>Submenú con varios kernels instalados y el <b>modo recovery</b>, para reparar el sistema si el último kernel falla.</p>'],
+ ['Memory test / UEFI Firmware Settings','<p>Vuelve al firmware (útil para cambiar el orden de arranque o activar Secure Boot).</p>'],
+ ['Windows Boot Manager','<p><code>os-prober</code> detecta otros sistemas y GRUB los encadena (<i>chainload</i>) a su propio cargador.</p>']];
+let g=0;const g4=document.getElementById('g4');
+g4.innerHTML='<div style="text-align:center;margin-bottom:8px">GNU GRUB  versión 2.x</div>'+G.map((x,i)=>`<button class="ent" data-i="${i}">${x[0]}</button>`).join('')+'<div style="font-size:12px;margin-top:10px;opacity:.8">Config: /boot/grub/grub.cfg<br>Pulsa e para editar · c para consola</div>';
+function gsel(i){g=(i+G.length)%G.length;g4.querySelectorAll('.ent').forEach((b,k)=>b.classList.toggle('on',k==g));document.getElementById('d4').innerHTML='<h3>'+G[g][0]+'</h3>'+G[g][1]}
+g4.querySelectorAll('.ent').forEach(b=>b.onclick=()=>gsel(+b.dataset.i));gsel(0);
+
+stepper('st5','d5',[
+ ['Descomprimirse','<p>El kernel (<code>vmlinuz</code>) viene comprimido. Un pequeño trozo de código lo descomprime en memoria y salta a él.</p>'],
+ ['Inicializar hardware','<p>Configura CPU, memoria, interrupciones y detecta buses. Verás los mensajes con <code>dmesg</code>.</p>'],
+ ['Montar el initramfs','<p>Un sistema de archivos temporal en RAM con los drivers mínimos (disco, cifrado, LVM) para poder encontrar el sistema real.</p>'],
+ ['Montar la raíz «/»','<p>Con los drivers ya cargados, monta el sistema de archivos raíz real (ext4, btrfs…) y abandona el initramfs.</p>'],
+ ['Lanzar el primer proceso','<p>Ejecuta <code>/sbin/init</code> (en la mayoría de distros, systemd). Será el <b>PID 1</b>, padre de todos los demás procesos.</p>']]);
+
+const Un=[['sysinit.target',0,20,'Monta sistemas de archivos, activa swap, udev detecta dispositivos.'],['basic.target',18,32,'Sockets, temporizadores y rutas básicas listas.'],['NetworkManager',30,60,'Configura la red. Se ejecuta en paralelo con otros servicios.'],['sshd.service',45,70,'Acceso remoto por SSH.'],['cups.service',45,75,'Servicio de impresión.'],['multi-user.target',72,82,'Sistema completo en modo texto con red.'],['gdm.service',80,95,'Gestor gráfico de inicio de sesión.'],['graphical.target',94,100,'Meta alcanzada: entorno gráfico.']];
+const b6=document.getElementById('b6');
+b6.innerHTML=Un.map((u,i)=>`<div class="row" data-i="${i}"><span class="mono">${u[0]}</span><div class="trk"><div class="fill" style="left:${u[1]}%"></div></div></div>`).join('');
+function usel(i){document.getElementById('d6').innerHTML='<h3 class="mono">'+Un[i][0]+'</h3><p>'+Un[i][3]+'</p><p>Comandos útiles: <code>systemctl status</code>, <code>systemd-analyze blame</code>.</p>'}
+b6.querySelectorAll('.row').forEach(r=>r.onclick=()=>usel(+r.dataset.i));usel(0);
+function units(){const f=b6.querySelectorAll('.fill');f.forEach(x=>{x.style.transition='none';x.style.width='0'});
+ setTimeout(()=>f.forEach((x,i)=>{x.style.transition='width '+(Un[i][2]-Un[i][1])*.04+'s linear '+Un[i][1]*.04+'s';x.style.width=(Un[i][2]-Un[i][1])+'%'}),60)}
+
+stepper('st7','d7',[
+ ['Aparece el login','<p>En modo gráfico lo muestra un <b>display manager</b> (GDM, SDDM…). En consola, <code>getty</code> pide «login:».</p>'],
+ ['Autenticación con PAM','<p>Tu contraseña se valida mediante <b>PAM</b>, que consulta <code>/etc/shadow</code>, huellas, LDAP, etc.</p>'],
+ ['Sesión con systemd-logind','<p>Se registra tu sesión, se asignan dispositivos (pantalla, audio) y se crea tu entorno de usuario.</p>'],
+ ['Se lanza tu shell o escritorio','<p>Se ejecuta tu shell (<code>bash</code>, <code>zsh</code>) con los ficheros <code>~/.profile</code> o arranca GNOME, KDE… 🎉</p>']],[['🖥️','Login'],['🔑','PAM'],['🧾','logind'],['🐚','Shell / escritorio']]);
+
+const h=parseInt((location.hash||'').replace('#s',''));go(isNaN(h)?0:h);
+</script></body></html>
